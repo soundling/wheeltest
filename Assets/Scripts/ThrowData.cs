@@ -22,6 +22,7 @@ public class WheelResultData
     public int euros;
     public bool isJackpot;
 }
+
 [Serializable]
 public class Key
 {

@@ -1370,7 +1370,7 @@ MonoBehaviour:
   fetcher: {fileID: 272752193}
   wheelPartsCount: 10
   radius: 4
-  WheelPartPrefab: {fileID: 3538423665079484721, guid: 273d939e7c24e0445bcdaa9cfa97340e, type: 3}
+  wheelPartPrefab: {fileID: 3538423665079484721, guid: 273d939e7c24e0445bcdaa9cfa97340e, type: 3}
   parent: {fileID: 272341301}
   curve:
     serializedVersion: 2
@@ -1396,17 +1396,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  isSpining: 0
-  currentKey:
-    key: 
-  currentResult:
-    index: 0
-    euros: 0
-    isJackpot: 0
-  currentInfos:
-    data: []
-    key: 
-  parts: []
 --- !u!4 &1674033789
 Transform:
   m_ObjectHideFlags: 0

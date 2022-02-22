@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -7,18 +5,20 @@ public class WheelPart : MonoBehaviour
 {
     public TextMeshPro textMesh;
     public TextMeshPro textMeshEuros;
+
     public void SetValueEuros(string t, bool isJackpot)
     {
-       SetValue(t, textMeshEuros, isJackpot ? Color.yellow : Color.black);
+        SetValue(t, textMeshEuros, isJackpot ? Color.yellow : Color.black);
     }
+
     public void SetValueWheelValue(string t)
     {
-        SetValue(t, textMesh, Color.black);;
+        SetValue(t, textMesh, Color.black);
     }
-    public void SetValue(string t, TextMeshPro label, Color color)
+
+    private void SetValue(string t, TextMeshPro label, Color color)
     {
         label.color = color;
         label.SetText(t);
     }
-    
 }

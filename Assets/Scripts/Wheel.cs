@@ -2,24 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Wheel : MonoBehaviour
 {
     public DataFetcher fetcher;
-    public int wheelPartsCount = 10;
-    public int radius = 2;
-    public GameObject WheelPartPrefab;
-   
-    public GameObject parent;
-    public AnimationCurve curve;
-    public bool isSpining;
     
-    public Key currentKey;
-    public WheelResultData currentResult;
-    public WheelInfosData currentInfos;
+    [SerializeField] private int wheelPartsCount = 10;
+    [SerializeField] private int radius = 2;
+    private bool _isSpinning;
+
+    [SerializeField] private GameObject wheelPartPrefab;
+    [SerializeField] private   GameObject parent;
+    
+    public AnimationCurve curve;
+
+    private Key _currentKey;
+    private WheelResultData _currentResult;
+    private WheelInfosData _currentInfos;
     
     public Action<WheelResultData> onWheelSpinEnd;
-    public List<WheelPart> parts = new List<WheelPart>();
+    private List<WheelPart> _parts = new List<WheelPart>();
     
     private void Start()
     {
@@ -40,21 +43,20 @@ public class Wheel : MonoBehaviour
             var direction = rotation * Vector3.forward;
 
             var position = transform.position + direction * radius;
-            var o = Instantiate(WheelPartPrefab, position, rotation, parent.transform);
+            var o = Instantiate(wheelPartPrefab, position, rotation, parent.transform);
             var part =   o.GetComponent<WheelPart>();
-            parts.Add(part);    
+            _parts.Add(part);    
             part.SetValueWheelValue(i.ToString());
         }
-        
     }
     
     // Assign values in Euros and color if Jackpot for each parts
     private void AssignInfosToWheel()
     {
         var i = 0;
-        foreach (var wheelPartData in currentInfos.data)
+        foreach (var wheelPartData in _currentInfos.data)
         {
-            parts[i].SetValueEuros(wheelPartData.euros.ToString(),wheelPartData.isJackpot);
+            _parts[i].SetValueEuros(wheelPartData.euros.ToString(),wheelPartData.isJackpot);
             i++;
         }
     }
@@ -62,14 +64,14 @@ public class Wheel : MonoBehaviour
     // Fetch the data before actually spinning the Wheel
     public void TrySpin()
     {
-        if(isSpining) return;
-        fetcher.GetWheelResult(ReceivedWheelResult,currentKey);
+        if(_isSpinning) return;
+        fetcher.GetWheelResult(ReceivedWheelResult,_currentKey);
     }
     
     // Fetch new informations for the wheel setup
     public void NextWheel()
     {
-        if(isSpining) return;
+        if(_isSpinning) return;
         fetcher.GetWheelInfos(ReceivedWheelInfos);
     }
     
@@ -77,25 +79,25 @@ public class Wheel : MonoBehaviour
     private void ReceivedWheelInfos(WheelInfosData obj)
     {
         var k = new Key { key = obj.key };
-        currentKey = k;
-        currentInfos = obj;
+        _currentKey = k;
+        _currentInfos = obj;
         
         AssignInfosToWheel();
     }
     
     private void ReceivedWheelResult(WheelResultData obj)
     {
-        currentResult = obj;
+        _currentResult = obj;
         Spin();
     }
     
     // Actual Spinning of the wheel targeting the result index for final rotation
     private void Spin()
     {
-        if (isSpining) return;
+        if (_isSpinning) return;
         
         var angle = 360f / (float)wheelPartsCount;
-        var targetPart = currentResult.index;
+        var targetPart = _currentResult.index;
         var force = UnityEngine.Random.Range(4, 8);
         var currentAngle = transform.eulerAngles.y;
         var totalAngle = -(targetPart * angle + 360 * force);
@@ -104,7 +106,7 @@ public class Wheel : MonoBehaviour
 
     private IEnumerator Rotate(float from, float to, float duration)
     {
-        isSpining = true;
+        _isSpinning = true;
         var elapsed = 0f;
         
         while (elapsed < duration)
@@ -116,9 +118,9 @@ public class Wheel : MonoBehaviour
             yield return null;
         }
 
-        isSpining = false;
+        _isSpinning = false;
         transform.eulerAngles = new Vector3(0.0f, to, 0f);
-        onWheelSpinEnd.Invoke(currentResult);
+        onWheelSpinEnd.Invoke(_currentResult);
     }
     
 }
